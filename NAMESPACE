@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+importFrom("grDevices", "dev.new", "dev.off", "graphics.off", "topo.colors", "terrain.colors")
+importFrom("graphics", "abline", "boxplot", "contour", "image", "lines", "par", "plot", "points")
+importFrom("stats", "cor", "median", "optim", "sd")
+importFrom("utils", "flush.console")
