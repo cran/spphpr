@@ -218,7 +218,7 @@ ADD <- function( S.pd = NULL, T0.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 12
       on.exit(par(par1))
       on.exit(par(par2))
       on.exit(par(par3))
-      plot(S.arr, cor.arr, cex.lab=1.5, cex.axis=1.5, xlab="Starting date (day of year)",           
+      plot(S.arr, cor.arr, cex.lab=1.5, cex.axis=1.5, xlab="Starting date (day-of-year)",           
          ylab="Correlation coefficient", type="l", lwd=1, col=4) 
       if( search.failure == 0)
         points(goal.S, goal.cor, pch=16, cex=1.5, col=2)
@@ -240,8 +240,8 @@ ADD <- function( S.pd = NULL, T0.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 12
     ul       <- max(c(Time.pred, Time))[1]
     interval <- (ul-ll)/8
     plot(Time, Time.pred, xlim=c(ll-interval, ul+interval), ylim=c(ll-interval, ul+interval), 
-         xlab="Observed occurrence time (day of year)",
-         ylab="Predicted occurrence time (day of year)", 
+         xlab="Observed occurrence time (day-of-year)",
+         ylab="Predicted occurrence time (day-of-year)", 
          cex.lab=1.5, cex.axis=1.5, pch=16, cex=1.5, col=2)
     abline(0, 1, lwd=1, col=4) 
     points(Time, Time.pred, pch=16, cex=1.5, col=2)  

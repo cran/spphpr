@@ -209,8 +209,8 @@ ADP <- function( S.arr, expr, ini.val, Year1, Time, Year2, DOY, Temp, DOY.ul=120
     interval <- (ul-ll)/8
     plot( Time, Time.pred, xlim=c(ll-interval, ul+interval), 
           ylim=c(ll-interval, ul+interval), 
-          xlab="Observed occurrence time (day of year)",
-          ylab="Predicted occurrence time (day of year)", 
+          xlab="Observed occurrence time (day-of-year)",
+          ylab="Predicted occurrence time (day-of-year)", 
           cex.lab=1.5, cex.axis=1.5, type="n" )
     abline(0, 1, lwd=1, col=4) 
     points(Time, Time.pred, pch=16, cex=1.5, col=2)  

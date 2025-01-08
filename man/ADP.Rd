@@ -4,7 +4,7 @@
 Function for Implementing the Accumulated Developmental Progress Method 
 }
 \description{
-Estimates the starting date (\eqn{S} in day of year) and the parameters in 
+Estimates the starting date (\eqn{S}, in day-of-year) and the parameters of 
 a developmental rate model in the accumulated developmental progress (ADP) 
 method using mean daily air temperatures (Wagner et al., 1984; Shi et al., 2017a, 2017b).
 }
@@ -13,52 +13,52 @@ ADP( S.arr, expr, ini.val, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
      fig.opt = TRUE, control = list(), verbose = TRUE )
 }
 \arguments{
-  \item{S.arr}{the candidate starting dates for thermal accumulation (in day of year)}
+  \item{S.arr}{the candidate starting dates for thermal accumulation (in day-of-year)}
   \item{expr}{a user-defined model that is used in the accumulated developmental progress (ADP) method}
   \item{ini.val}{a vector or a list that saves the initial values of the parameters in \code{expr}}
-  \item{Year1}{the vector of the years recording a particular phenological event}
-  \item{Time}{the vector of the occurence times (in day of year) of a particular phenological event across many years}
+  \item{Year1}{the vector of the years in which a particular phenological event was recorded}
+  \item{Time}{the vector of the occurence times (in day-of-year) of a particular phenological event across many years}
   \item{Year2}{the vector of the years recording the climate data corresponding to the occurrence times}
-  \item{DOY}{the vector of the dates (in day of year) when the climate data exist}
+  \item{DOY}{the vector of the dates (in day-of-year) for which climate data exist}
   \item{Temp}{the mean daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
   \item{DOY.ul}{the upper limit of \code{DOY} used to predict the occurrence time}
-  \item{fig.opt}{an optional argument of drawing the figures assoicated with the temperature-dependent developmental rate curve, 
+  \item{fig.opt}{an optional argument to draw the figures associated with the temperature-dependent developmental rate curve, 
 the mean daily temperatures versus years, and a comparision between the predicted and observed occurrence times}
-  \item{control}{the list of control parameters for using the \code{\link{optim}} function in package \pkg{stats}}
-  \item{verbose}{an optional argument of allowing users to suppress printing of computation progress}
+  \item{control}{the list of control parameters for using the \code{\link{optim}} function in the \pkg{stats} package}
+  \item{verbose}{an optional argument allowing users to suppress the printing of computation progress}
 }
 \details{
 
-It is better not to set too much candiate starting dates, which will be time-consuming. If \code{expr} 
-is selected as Arrhenius' equation, \code{S.arr} can be selected as \code{S} obtained from the output of 
-carrying out the \code{\link{ADTS}} function. Here, \code{expr} can be other nonlinear temperature-dependent 
-developmental rate functions (see Shi et al. [2017b] for details). Here, \code{expr} can be any an arbitrary 
+It is better not to set too many candiate starting dates, as doing so will be time-consuming. If \code{expr} 
+is selected as Arrhenius' equation, \code{S.arr} can be selected as the \code{S} obtained from the output of 
+the \code{\link{ADTS}} function. Here, \code{expr} can be other nonlinear temperature-dependent 
+developmental rate functions (see Shi et al. [2017b] for details). Further, \code{expr} can be any an arbitrary 
 user-defined temperature-dependent developmental rate function, e.g., a function named \code{myfun}, 
-but it needs to take the following form of \code{myfun <- function(P, x){...}}, 
+but it needs to take the form of \code{myfun <- function(P, x){...}}, 
 where \code{P} is the vector of the model parameter(s), and \code{x} is the vector of the 
 predictor variable, i.e., the temperature variable.
 
-\eqn{\qquad}The function does not require that \code{Year1} is the same as the unique of \code{Year2}, 
-and the intersection of two years will be finally kept. The unused years that have phenological 
-records but lack the climate data will be showed in \code{unused.years} in the returned list. 
+\eqn{\qquad}The function does not require that \code{Year1} is the same as \code{unique(Year2)}, 
+and the intersection of the two vectors of years will be kept. The unused years that have phenological 
+records but lack climate data will be showed in \code{unused.years} in the returned list. 
 
-\eqn{\qquad}The numerical value of \code{DOY.ul} should be larger than or equal to the maximum \code{Time}.
+\eqn{\qquad}The numerical value of \code{DOY.ul} should be greater than or equal to the maximum \code{Time}.
 
 \eqn{\qquad} Let \eqn{r} represent the temperature-dependent developmental rate, i.e., 
 the reciprocal of the developmental 
-duration at a constant temperature required for completing a particular phenological event. 
+duration required for completing a particular phenological event, at a constant temperature. 
 In the accumulated developmental progress (ADP) method, when the annual accumulated developmental 
 progress (AADP) reaches 100\%, the phenological event is predicted to occurr for each year. 
 Let \eqn{\mathrm{AADP}_{i}} denote the AADP of the \eqn{i}th year, which equals
 
 \deqn{\mathrm{AADP}_{i} = \sum_{j=S}^{E_{i}}r_{ij}\left(\mathrm{\mathbf{P}}; T_{ij}\right),}
 
-where \eqn{S} represents the starting date (in day of year), \eqn{E_{i}} represents the ending date 
-(in day of year), i.e., the occurrence time of a pariticular phenological event in the \eqn{i}th year, 
+where \eqn{S} represents the starting date (in day-of-year), \eqn{E_{i}} represents the ending date 
+(in day-of-year), i.e., the occurrence time of a pariticular phenological event in the \eqn{i}th year, 
 \eqn{\mathrm{\mathbf{P}}} is the vector of the model parameters in \code{expr}, 
 and \eqn{T_{ij}} represents the mean daily temperature of the \eqn{j}th day of the \eqn{i}th 
 year (in \eqn{{}^{\circ}}C or K). In theory, \eqn{\mathrm{AADP}_{i} = 100\%}, 
-i.e., the AADP values of different years are a constant of 100\%. However, in practice, there is 
+i.e., the AADP values of different years are a constant 100\%. However, in practice, there is 
 a certain deviation of \eqn{\mathrm{AADP}_{i}} from 100\%. The following approach 
 is used to determine the predicted occurrence time. 
 When \eqn{\sum_{j=S}^{F}r_{ij} = 100\%} (where \eqn{F \geq S}), it follows that \eqn{F} is 
@@ -74,7 +74,7 @@ occurrence times, i.e.,
 \mathrm{\mathbf{P}}}\left\{\mathrm{RMSE}\right\} = \mathrm{arg}\,\mathop{\mathrm{min}}\limits_{
 \mathrm{\mathbf{P}}}\sqrt{\frac{\sum_{i=1}^{n}\left(E_{i}-\hat{E}_i\right){}^{2}}{n}}.}
 
-Because \eqn{S} is not determined, a group of candidate \eqn{S} values (in day of year) need to 
+Because \eqn{S} is not determined, a group of candidate \eqn{S} values (in day-of-year) need to 
 be provided. Assume that there are \eqn{m} candidate \eqn{S} values, i.e., \eqn{S_{1}, S_{2}, S_{3}, 
 \cdots, S_{m}}. For each \eqn{S_{q}} (where \eqn{q} ranges between 1 and \eqn{m}), we can obtain 
 a vector of the estimated model parameters, \eqn{\mathrm{\mathbf{\hat{P}}}_{q}}, by minimizing 
@@ -85,18 +85,18 @@ as the target parameter vector.
 }
 \value{
   \item{TDDR}{the temperature-dependent developmental rate matrix consisting of the year, 
-day of year, mean daily temperature and developmental rate columns}
-  \item{MAT}{a matrix consisting of the candidate starting dates, the estimates of 
+day-of-year, mean daily temperature and developmental rate columns}
+  \item{MAT}{a matrix consisting of the candidate starting dates and the estimates of 
 candidate model parameters with the corresponding RMSEs}
   \item{Dev.accum}{the calculated annual accumulated developmental progresses in different years} 
-  \item{Year}{The intersected years between \code{Year1} and \code{Year2}}
-  \item{Time}{The observed occurence times (day of year) in the intersected years 
+  \item{Year}{The overlapping years between \code{Year1} and \code{Year2}}
+  \item{Time}{The observed occurence times (day-of-year) in the overlapping years 
 between \code{Year1} and \code{Year2}}
   \item{Time.pred}{the predicted occurence times in different years}
-  \item{S}{the determined starting date (day of year)}
-  \item{par}{the estiamtes of model parameters}
+  \item{S}{the determined starting date (day-of-year)}
+  \item{par}{the estimates of model parameters}
   \item{RMSE}{the RMSE (in days) between the observed and predicted occurrence times}
-  \item{unused.years}{the years that have phenological records but lack the climate data}
+  \item{unused.years}{the years that have phenological records but lack climate data}
 }
 \references{
 Nelder, J.A., Mead, R. (1965) A simplex method for function minimization. 
@@ -122,10 +122,10 @@ Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com},
 Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
 }
 \note{
-The entire mean daily temperature data in the spring of each year should be provided. 
+The entire mean daily temperature data set for the spring of each year should be provided. 
 In \code{TDDR}, the first column of \code{Year} saves the years, the second column 
-of \code{DOY} saves the day of year values, the third column of \code{Temperature} 
-saves the mean daily air temperatures between the starting date to the occurrence times, 
+of \code{DOY} saves the day-of-year values, the third column of \code{Temperature} 
+saves the mean daily air temperatures calculated between the starting date to the occurrence times, 
 and the fourth column of \code{Rate} saves the calculated developmental rates 
 corresponding to the mean daily temperatures. 
 }
@@ -135,9 +135,9 @@ corresponding to the mean daily temperatures.
 \examples{
 
 data(apricotFFD)
-data(BJMDT)
+data(BJDAT)
 X1 <- apricotFFD
-X2 <- BJMDT
+X2 <- BJDAT
 
 Year1.val  <- X1$Year
 Time.val   <- X1$Time

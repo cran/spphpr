@@ -4,7 +4,7 @@
 Function for Implementing the Accumulated Degree Days Method
 }
 \description{
-Estimates the starting date (\eqn{S} in day of year) and base tempeature (\eqn{T_{0}} in \eqn{{}^{\circ}}C) 
+Estimates the starting date (\eqn{S}, in day-of-year) and base tempeature (\eqn{T_{0}}, in \eqn{{}^{\circ}}C) 
 in the accumulated degree days method using mean daily air temperatures (Aono, 1993; Shi et al., 2017a, 2017b).
 }
 \usage{
@@ -12,19 +12,19 @@ ADD(S.pd = NULL, T0.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
     fig.opt = TRUE, S.def = 54, verbose = TRUE)
 }
 \arguments{
-  \item{S.pd}{the pre-determined starting date for thermal accumulation (in day of year)}
+  \item{S.pd}{the pre-determined starting date for thermal accumulation (in day-of-year)}
   \item{T0.arr}{the candidate base temperatures (in \eqn{{}^{\circ}}C)}
-  \item{Year1}{the vector of the years recording a particular phenological event}
-  \item{Time}{the vector of the occurence times (in day of year) of a particular phenological event across many years}
+  \item{Year1}{the vector of the years in which a particular phenological event was recorded}
+  \item{Time}{the vector of the occurence times (in day-of-year) of a particular phenological event across many years}
   \item{Year2}{the vector of the years recording the climate data corresponding to the occurrence times}
-  \item{DOY}{the vector of the dates (in day of year) when the climate data exist}
+  \item{DOY}{the vector of the dates (in day-of-year) for which climate data exist}
   \item{Temp}{the mean daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
   \item{DOY.ul}{the upper limit of \code{DOY} used to predict the occurrence time}
-  \item{fig.opt}{an optional argument of drawing the figures assoicated with the determinations 
+  \item{fig.opt}{an optional argument to draw the figures associated with the determinations 
 of the starting date and base temperature, and a comparision between the predicted and observed occurrence times}
   \item{S.def}{a mandatory defintion of the starting date when (i) \code{S.pd} is NULL 
 and (ii) the minimum correlation coefficient method fails to find a suitable starting date}
-  \item{verbose}{an optional argument of allowing users to suppress printing of computation progress}
+  \item{verbose}{an optional argument allowing users to suppress the printing of computation progress}
 }
 \details{
 
@@ -35,19 +35,19 @@ will be determined to be the starting date on the condition that it is smaller t
 the mininum phenological occurence time. If the determined date associated with the minimum 
 correlation coefficient is greater than the mininum phenological occurence time, \code{S.def} 
 will be used as the starting date. If \code{S.pd} is not NULL, the starting date will be 
-directly assigned as \code{S.pd} irrespective of the minimum correlation coefficient method 
-and the value of \code{S.def}. This means, \code{S.pd} is superior to \code{S.def} in determining 
+directly set as \code{S.pd} irrespective of the minimum correlation coefficient method 
+and the value of \code{S.def}. This means that \code{S.pd} is superior to \code{S.def} in determining 
 the starting date.
 
-\eqn{\qquad}The function does not require that \code{Year1} is the same as the unique of \code{Year2}, 
-and the intersection of two years will be finally kept. The unused years that have phenological 
-records but lack the climate data will be showed in \code{unused.years} in the returned list. 
+\eqn{\qquad}The function does not require that \code{Year1} is the same as \code{unique(Year2)}, 
+and the intersection of the two vectors of years will be kept. The unused years that have phenological 
+records but lack climate data will be showed in \code{unused.years} in the returned list. 
 
-\eqn{\qquad}The numerical value of \code{DOY.ul} should be larger than or equal to the maximum \code{Time}.
+\eqn{\qquad}The numerical value of \code{DOY.ul} should be greater than or equal to the maximum \code{Time}.
 
 }
 \value{
-  \item{S.arr}{the candidate starting dates (in day of year), whose default ranges from 
+  \item{S.arr}{the candidate starting dates (in day-of-year), whose default ranges from 
 the minimum \code{DOY} to min(\code{DOY.ul}, the maximum \code{DOY})}
   \item{cor.coef.arr}{the candidate correlation coefficients between the mean of the mean daily tempertures 
 (from a candidate starting date to the observed occurrence time) and the observed occurrence time}
@@ -59,18 +59,18 @@ by the minimum correlation coefficient method when \code{S.pd = NULL}, where 0 r
   \item{RMSE.arr}{a vector saving the candidate root-mean-square errors (in days) between 
 the observed and predicted occurrence times for each of the candidate base temperatures}
   \item{AADD.arr}{the annual accumulated degree days (AADD) values in different years}
-  \item{Year}{The intersected years between \code{Year1} and \code{Year2}}
-  \item{Time}{The observed occurence times (day of year) in the intersected years 
+  \item{Year}{The overlapping years between \code{Year1} and \code{Year2}}
+  \item{Time}{The observed occurence times (day-of-year) in the overlapping years 
 between \code{Year1} and \code{Year2}}
   \item{Time.pred}{the predicted occurence times in different years}
-  \item{S}{the determined starting date (day of year)}
+  \item{S}{the determined starting date (day-of-year)}
   \item{T0}{the determined base temperature (in \eqn{{}^{\circ}}C)}
   \item{AADD}{the expected annual accumulated degree days}
   \item{RMSE}{the smallest RMSE (in days) from the different candidate base temperatures}
-  \item{unused.years}{the years that have phenological records but lack the climate data}
+  \item{unused.years}{the years that have phenological records but lack climate data}
 }
 \references{
-Aono, Y. (1993) Climatological studies on blooming of cherry tree (Prunus yedoensis) by means 
+Aono, Y. (1993) Climatological studies on blooming of cherry tree (\emph{Prunus yedoensis}) by means 
 of DTS method. \emph{Bulletin of the University of Osaka Prefecture. Ser. B, Agriculture and life sciences} 
 45, 155\eqn{-}192 (in Japanese with English abstract).
 
@@ -87,7 +87,7 @@ Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com},
 Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
 }
 \note{
-The entire mean daily temperature data in the spring of each year should be provided. 
+The entire mean daily temperature data set for the spring of each year should be provided. 
 \code{AADD} is represented by the mean of \code{AADD.arr} in the output. 
 When the argument of \code{S.pd} is not \code{NULL}, the returned value of \code{search.failure} will be \code{NA}. 
 When the argument of \code{S.pd} is \code{NULL}, and the minimum correlation coefficient method fails 
@@ -101,9 +101,9 @@ date, i.e., the returned value of \code{S}. At the same time, the returned value
 \examples{
 
 data(apricotFFD)
-data(BJMDT)
+data(BJDAT)
 X1 <- apricotFFD
-X2 <- BJMDT
+X2 <- BJDAT
 
 Year1.val  <- X1$Year
 Time.val   <- X1$Time
@@ -127,7 +127,7 @@ S.pd0      <- NULL
   par1 <- par(family="serif")
   par2 <- par(mar=c(5, 5, 2, 2))
   par3 <- par(mgp=c(3, 1, 0))
-  plot( S0, r0, cex.lab = 1.5, cex.axis = 1.5, xlab = "Candidate starting date (day of year)", 
+  plot( S0, r0, cex.lab = 1.5, cex.axis = 1.5, xlab = "Candidate starting date (day-of-year)", 
         ylab="Correlation coefficient between the mean temperature and FFD", type="l" )
   ind <- which.min(r0)
   points(S0[ind], r0[ind], cex = 1.5, pch = 16)

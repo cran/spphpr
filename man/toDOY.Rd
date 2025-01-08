@@ -1,10 +1,10 @@
 \name{toDOY}
 \alias{toDOY}
 \title{
-Function for Transferring a Date to the Value of Day of Year
+Function for Transferring a Date to the Value of Day-of-Year
 }
 \description{
-Transfers the date (from year, month and day) to the value of day of year.
+Transfers the date (from year, month and day) to the value of day-of-year.
 }
 \usage{
 toDOY(Year, Month, Day)
@@ -19,7 +19,7 @@ The user needs to provide the three separate vectors of \code{Year}, \code{Month
 rather than providing a single date vector. The arguments can be numerical vectors or character vectors.
 }
 \value{
-  The returned value is a vector of transferred dates in day of year.
+  The returned value is a vector of transferred dates in day-of-year.
 }
 \references{
 
@@ -36,16 +36,16 @@ Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com},
 Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
 }
 \note{
-The returned vector, \code{DOY}, usually mathes with the year vector and the mean daily 
+The returned vector, \code{DOY}, usually matches with the year vector and the mean daily 
 temperature vector as arguments in other functions, e.g., the \code{\link{ADD}} function.
 }
 \seealso{
-\code{\link{BJMDT}}
+\code{\link{BJDAT}}
 }
 \examples{
 
-data(BJMDT)
-X2   <- BJMDT
+data(BJDAT)
+X2   <- BJDAT
 DOY2 <- toDOY(X2$Year, X2$Month, X2$Day)
 # cbind(X2$DOY, DOY2)
 

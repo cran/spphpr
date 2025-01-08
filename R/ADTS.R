@@ -118,7 +118,7 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
       RMSE.mat[counter1, counter2] <- sqrt(sum((Time.pred-Time)^2)/length(Time))
     }
   }
-  location <- which(RMSE.mat == min(RMSE.mat[!is.na(RMSE.mat)]), arr.ind=T)
+  location <- which(RMSE.mat == min(RMSE.mat[!is.na(RMSE.mat)]), arr.ind=TRUE)
   if(length(location) > 0){
     if (nrow(location) == 1 ){
       temp1 <- RMSE.mat[location]
@@ -190,7 +190,7 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
         if( length(Ea.arr) > 1 ){
           cols <- terrain.colors(200)
           image(S.arr, Ea.arr, RMSE.mat, col = cols, axes = TRUE, cex.axis = 1.5, cex.lab = 1.5, 
-            xlab="Starting date (day of year)", 
+            xlab="Starting date (day-of-year)", 
             ylab=expression(paste(italic(E["a"]), 
             " (kcal" %.% "mol"^{"-1"}, ")", sep="")))
           points(goal.S, goal.Ea, cex=1.5, pch=16, col=2)
@@ -200,7 +200,7 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
         if( length(Ea.arr) == 1 ){
           plot( S.arr, RMSE.mat, cex.axis = 1.5, cex.lab = 1.5, xlim=range(S.arr),
             ylab="RMSE (days)", 
-            xlab="Starting date (day of year)", pch=16, cex=1.5, col=4)
+            xlab="Starting date (day-of-year)", pch=16, cex=1.5, col=4)
           points(goal.S, goal.RMSE, cex=1.5, pch=16, col=2)  
         }
       }
@@ -230,8 +230,8 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
       ul       <- max(c(Time.pred, Time))[1]
       interval <- (ul-ll)/8
       plot(Time, Time.pred, xlim=c(ll-interval, ul+interval), ylim=c(ll-interval, ul+interval), 
-           xlab="Observed occurrence time (day of year)",
-           ylab="Predicted occurrence time (day of year)", 
+           xlab="Observed occurrence time (day-of-year)",
+           ylab="Predicted occurrence time (day-of-year)", 
            cex.lab=1.5, cex.axis=1.5, pch=16, cex=1.5, col=2)
       abline(0, 1, lwd=1, col=4) 
       points(Time, Time.pred, pch=16, cex=1.5, col=2)  

@@ -12,33 +12,33 @@ method based on observed or predicted mean daily air temperatures
 predADP(S, expr, theta, Year2, DOY, Temp, DOY.ul = 120)
 }
 \arguments{
-  \item{S}{the starting date for thermal accumulation (in day of year)}
+  \item{S}{the starting date for thermal accumulation (in day-of-year)}
   \item{expr}{a user-defined model that is used in the accumulated developmental progress (ADP) method}
   \item{theta}{a vector saves the numerical values of the parameters in \code{expr}}
   \item{Year2}{the vector of the years recording the climate data for predicting the occurrence times}
-  \item{DOY}{the vector of the dates (in day of year) when the climate data exist}
+  \item{DOY}{the vector of the dates (in day-of-year) for which climate data exist}
   \item{Temp}{the mean daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
   \item{DOY.ul}{the upper limit of \code{DOY} used to predict the occurrence time}
 }
 \details{
-Organisms showing phenological events in early spring often experience several cold days 
-during the development. In this case, Arrhenius' equation (Shi et al., 2017a, 2017b, 
+Organisms exhibiting phenological events in early spring often experience several cold days 
+during their development. In this case, Arrhenius' equation (Shi et al., 2017a, 2017b, 
 and references therein) has been recommended to describe the effect of the absolute temperature 
 (\eqn{T} in Kelvin [K]) on the developmental rate (\eqn{r}):
 \deqn{r = \mathrm{exp}\left(B - \frac{E_{a}}{R\,T}\right),}
 where \eqn{E_{a}} represents the activation free energy (in kcal \eqn{\cdot} mol\eqn{{}^{-1}}); 
 \eqn{R} is the universal gas constant (= 1.987 cal \eqn{\cdot} mol\eqn{{}^{-1}} \eqn{\cdot} K\eqn{{}^{-1}}); 
-\eqn{B} is a constant. To keep the consistence of the unit used in \eqn{E_{a}} and \eqn{R}, we need to 
-re-assign \eqn{R} to be 1.987\eqn{\times {10}^{-3}} to make its unit 1.987\eqn{\times {10}^{-3}} 
+\eqn{B} is a constant. To maintain consistency between the units used for \eqn{E_{a}} and \eqn{R}, we need to 
+re-assign \eqn{R} to be 1.987\eqn{\times {10}^{-3}}, making its unit 1.987\eqn{\times {10}^{-3}} 
 kcal \eqn{\cdot} mol\eqn{{}^{-1}} \eqn{\cdot} K\eqn{{}^{-1}} in the above formula. 
 
 \eqn{\qquad}In the accumulated developmental progress (ADP) method, when the annual accumulated developmental 
-progress (AADP) reaches 100\%, the phenological event is predicted to occurr for each year. 
+progress (AADP) reaches 100\%, the phenological event is predicted to occur for each year. 
 Let \eqn{\mathrm{AADP}_{i}} denote the AADP of the \eqn{i}th year, which equals
 
 \deqn{\mathrm{AADP}_{i} = \sum_{j=S}^{E_{i}}r_{ij},}
 
-where \eqn{E_{i}} represents the ending date (in day of year), i.e., the occurrence time of a pariticular 
+where \eqn{E_{i}} represents the ending date (in day-of-year), i.e., the occurrence time of a pariticular 
 phenological event in the \eqn{i}th year. If the temperature-dependent developmental rate follows 
 Arrhenius' equation, the AADP of the \eqn{i}th year is equal to  
 
@@ -46,7 +46,7 @@ Arrhenius' equation, the AADP of the \eqn{i}th year is equal to
 
 where \eqn{T_{ij}} represents the mean daily temperature of the 
 \eqn{j}th day of the \eqn{i}th year (in K). In theory, \eqn{\mathrm{AADP}_{i} = 100\%}, 
-i.e., the AADP values of different years are a constant of 100\%. However, in practice, there is 
+i.e., the AADP values of different years are a constant 100\%. However, in practice, there is 
 a certain deviation of \eqn{\mathrm{AADP}_{i}} from 100\%. The following approach 
 is used to determine the predicted occurrence time. 
 When \eqn{\sum_{j=S}^{F}r_{ij} = 100\%} (where \eqn{F \geq S}), it follows that \eqn{F} is 
@@ -56,13 +56,13 @@ is used to determine the predicted occurrence time.
 
 \eqn{\qquad}The argument of \code{expr} can be any an arbitrary user-defined temperature-dependent 
 developmental rate function, e.g., a function named \code{myfun}, 
-but it needs to take the following form of \code{myfun <- function(P, x){...}}, 
+but it needs to take the form of \code{myfun <- function(P, x){...}}, 
 where \code{P} is the vector of the model parameter(s), and \code{x} is the vector of the 
 predictor variable, i.e., the temperature variable.  
 }
 \value{
   \item{Year}{the years with climate data}
-  \item{Time.pred}{the predicted occurence times (day of year) in different years}
+  \item{Time.pred}{the predicted occurence times (day-of-year) in different years}
 }
 \references{
 Ring, D.R., Harris, M.K. (1983) Predicting pecan nut casebearer (Lepidoptera: Pyralidae) activity 
@@ -86,8 +86,8 @@ Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com},
 Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
 }
 \note{
-The entire mean daily temperature data in the spring of each year should be provided. 
-There is a need to note that the unit of \code{Temp} in \bold{Arguments} is \eqn{{}^{\circ}}C, not K. 
+The entire mean daily temperature data set for the spring of each year should be provided. 
+It should be noted that the unit of \code{Temp} in \bold{Arguments} is \eqn{{}^{\circ}}C, not K. 
 In addition, when using Arrhenius' equation to describe \eqn{r}, to reduce the size of \eqn{B} 
 in this equation, Arrhenius' equation is multiplied by \eqn{{10}^{12}} in calculating the 
 AADP value for each year, i.e., 
@@ -100,9 +100,9 @@ AADP value for each year, i.e.,
 \examples{
 
 data(apricotFFD)
-data(BJMDT)
+data(BJDAT)
 X1 <- apricotFFD
-X2 <- BJMDT
+X2 <- BJDAT
 Year1.val  <- X1$Year
 Time.val   <- X1$Time
 Year2.val  <- X2$Year
@@ -120,7 +120,7 @@ Arrhenius.eqn <- function(P, x){
   10^12*exp(B-Ea/(R*x))
 }
 
-P0 <- c(-4.7823, 14.8198)
+P0 <- c(-4.3787, 15.0431)
 T2 <- seq(-10, 20, len = 2000)
 r2 <- Arrhenius.eqn(P = P0, x = T2)
 

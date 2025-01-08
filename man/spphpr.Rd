@@ -6,7 +6,7 @@
 Spring Phenological Prediction
 }
 \description{
-Predicts the occurrence times (in day of year) of spring phenological events. 
+Predicts the occurrence times (in day-of-year) of spring phenological events. 
 Three methods, including the accumulated degree days (ADD) method, 
 the accumulated days transferred to a standardized temperature (ADTS) method, 
 and the accumulated developmental progress (ADP) method, were used. 
@@ -19,7 +19,7 @@ The DESCRIPTION file:
 }
 \note{
 We thank Benjamin Altmann, Lei Chen, Linli Deng, Feng Ge, Wen Gu, Liang Guo, Jianguo Huang, 
-Cang Hui, Konstanze Lauseker, Gadi V.P. Reddy, Jing Tan, Mei Xiao, Lin Wang, 
+Cang Hui, Konstanze Lauseker, Gadi V.P. Reddy, Jing Tan, Di Tang, Yunfeng Yang, Mei Xiao, Lin Wang, 
 and Wangxiang Zhang for their valuable help during the development of this package.
 }
 \author{
