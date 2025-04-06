@@ -19,11 +19,11 @@ The DESCRIPTION file:
 }
 \note{
 We thank Benjamin Altmann, Lei Chen, Linli Deng, Feng Ge, Wen Gu, Liang Guo, Jianguo Huang, 
-Cang Hui, Konstanze Lauseker, Gadi V.P. Reddy, Jing Tan, Di Tang, Yunfeng Yang, Mei Xiao, Lin Wang, 
+Cang Hui, Konstanze Lauseker, Gadi V.P. Reddy, Di Tang, Yunfeng Yang, Mei Xiao, Lin Wang, 
 and Wangxiang Zhang for their valuable help during the development of this package.
 }
 \author{
-Peijian Shi [aut, cre], Zhenghong Chen [aut], Brady K. Quinn [aut]
+Peijian Shi [aut, cre], Zhenghong Chen [aut], Jing Tan [aut], Brady K. Quinn [aut]
 
 Maintainer: Peijian Shi <pjshi@njfu.edu.cn>
 }

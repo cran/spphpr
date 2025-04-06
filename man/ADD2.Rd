@@ -1,15 +1,15 @@
-\name{ADD}
-\alias{ADD}
+\name{ADD2}
+\alias{ADD2}
 \title{
-Function for Implementing the Accumulated Degree Days Method Using Mean Daily Temperatures
+Function for Implementing the Accumulated Degree Days Method Using Minimum and Maximum Daily Temperatures
 }
 \description{
 Estimates the starting date (\eqn{S}, in day-of-year) and base tempeature (\eqn{T_{0}}, in \eqn{{}^{\circ}}C) 
-in the accumulated degree days method using mean daily air temperatures (Aono, 1993; Shi et al., 2017a, b).
+in the accumulated degree days method using minimum and maximum daily air temperatures (Aono, 1993; Shi et al., 2017a, b).
 }
 \usage{
-ADD(S.pd = NULL, T0.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120, 
-    fig.opt = TRUE, S.def = 54, verbose = TRUE)
+ADD2(S.pd = NULL, T0.arr, Year1, Time, Year2, DOY, Tmin, Tmax,  
+     DOY.ul = 120, fig.opt = TRUE, S.def = 54, verbose = TRUE)
 }
 \arguments{
   \item{S.pd}{the pre-determined starting date for thermal accumulation (in day-of-year)}
@@ -18,7 +18,8 @@ ADD(S.pd = NULL, T0.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
   \item{Time}{the vector of the occurrence times (in day-of-year) of a particular phenological event across many years}
   \item{Year2}{the vector of the years recording the climate data corresponding to the occurrence times}
   \item{DOY}{the vector of the dates (in day-of-year) for which climate data exist}
-  \item{Temp}{the mean daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
+  \item{Tmin}{the minimum daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
+  \item{Tmax}{the maximum daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
   \item{DOY.ul}{the upper limit of \code{DOY} used to predict the occurrence time}
   \item{fig.opt}{an optional argument to draw the figures associated with the determinations 
 of the starting date and base temperature, and a comparison between the predicted and observed occurrence times}
@@ -29,8 +30,8 @@ and (ii) the minimum correlation coefficient method fails to find a suitable sta
 \details{
 
 The default of \code{S.pd} is NULL. In this case, the date associated with the minimum 
-correlation coefficient [between the mean of the mean daily temperatures (from a candidate starting 
-date to the observed occurrence time) and the observed occurrence time] 
+correlation coefficient [between the mean of the (\code{Tmin} + \code{Tmax})/2 values (from a 
+candidate starting date to the observed occurrence time) and the observed occurrence time] 
 will be determined to be the starting date on the condition that it is smaller than 
 the mininum phenological occurrence time. If the determined date associated with the minimum 
 correlation coefficient is greater than the mininum phenological occurrence time, \code{S.def} 
@@ -49,7 +50,7 @@ records but lack climate data will be showed in \code{unused.years} in the retur
 \value{
   \item{S.arr}{the candidate starting dates (in day-of-year), whose default ranges from 
 the minimum \code{DOY} to min(\code{DOY.ul}, the maximum \code{DOY})}
-  \item{cor.coef.arr}{the candidate correlation coefficients between the mean of the mean daily tempertures 
+  \item{cor.coef.arr}{the candidate correlation coefficients between the mean of the (\code{Tmin} + \code{Tmax})/2 values
 (from a candidate starting date to the observed occurrence time) and the observed occurrence time}
   \item{cor.coef}{the minimum correlation coefficient, i.e., min(\code{cor.coef.arr})}
   \item{search.failure}{a value of 0 or 1 of showing whether the starting date is successfully determined 
@@ -87,7 +88,7 @@ Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com},
 Jing Tan \email{jmjwyb@163.com}, Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
 }
 \note{
-The entire mean daily temperature data set for the spring of each year should be provided. 
+The entire minimum and maximum daily temperature data set for the spring of each year should be provided. 
 \code{AADD} is represented by the mean of \code{AADD.arr} in the output. 
 When the argument of \code{S.pd} is not \code{NULL}, the returned value of \code{search.failure} will be \code{NA}. 
 When the argument of \code{S.pd} is \code{NULL}, and the minimum correlation coefficient method fails 
@@ -96,7 +97,7 @@ date, i.e., the returned value of \code{S}. At the same time, the returned value
 
 }
 \seealso{
-\code{\link{predADD}}
+\code{\link{predADD2}}
 }
 \examples{
 
@@ -109,19 +110,20 @@ Year1.val  <- X1$Year
 Time.val   <- X1$Time
 Year2.val  <- X2$Year
 DOY.val    <- X2$DOY
-Temp.val   <- X2$MDT
+Tmin.val   <- X2$MinDT
+Tmax.val   <- X2$MaxDT
 DOY.ul.val <- 120
-T0.arr0    <- seq(-5, 5, by = 0.1) 
+T0.arr0    <- seq(3.5, 4, by = 0.1) 
 S.pd0      <- NULL
 
 \donttest{
-  res1 <- ADD( S.pd = S.pd0, T0.arr = T0.arr0, Year1 = Year1.val, Time = Time.val, 
-               Year2 = Year2.val, DOY = DOY.val, Temp = Temp.val, 
-               DOY.ul = DOY.ul.val, fig.opt = TRUE, S.def=54, verbose = TRUE )
-  res1
+  cand.res1 <- ADD2( S.pd = S.pd0, T0.arr = T0.arr0, Year1 = Year1.val, Time = Time.val, 
+                     Year2 = Year2.val, DOY = DOY.val, Tmin = Tmin.val, Tmax = Tmax.val, 
+                     DOY.ul = DOY.ul.val, fig.opt = TRUE, S.def=54, verbose = TRUE )
+  cand.res1
 
-  S0 <- res1$S.arr 
-  r0 <- res1$cor.coef.arr
+  S0 <- cand.res1$S.arr 
+  r0 <- cand.res1$cor.coef.arr
   
   dev.new()
   par1 <- par(family="serif")
@@ -135,11 +137,6 @@ S.pd0      <- NULL
   par(par1)
   par(par2)
   par(par3)
-
-  resu1 <- ADD( S.pd = 47, T0.arr = seq(-10, 0, by = 0.1), Year1 = Year1.val, Time = Time.val, 
-                Year2 = Year2.val, DOY = DOY.val, Temp = Temp.val, 
-                DOY.ul = DOY.ul.val, fig.opt = TRUE, S.def = 54, verbose = TRUE )
-  resu1
 
   # graphics.off()
 

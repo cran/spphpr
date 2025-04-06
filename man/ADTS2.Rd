@@ -1,17 +1,18 @@
-\name{ADTS}
-\alias{ADTS}
+\name{ADTS2}
+\alias{ADTS2}
 \title{
-Function for Implementing the Accumulated Days Transferred to a Standardized Temperature Method Using Mean Daily Temperatures
+Function for Implementing the Accumulated Days Transferred to a Standardized 
+Temperature Method Using Minimum and Maximum Daily Temperatures
 }
 \description{
 Estimates the starting date (\eqn{S}, in day-of-year) and activation free energy (\eqn{E_{a}}, in kcal 
 \eqn{\cdot} mol\eqn{{}^{-1}}) in the accumulated days transferred to a standardized 
-temperature (ADTS) method using mean daily air temperatures 
+temperature (ADTS) method using minimum and maximum daily air temperatures 
 (Konno and Sugihara, 1986; Aono, 1993; Shi et al., 2017a, b).
 }
 \usage{
-ADTS( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120, 
-      fig.opt = TRUE, verbose = TRUE )
+ADTS2( S.arr, Ea.arr, Year1, Time, Year2, DOY, Tmin, Tmax, 
+       DOY.ul = 120, fig.opt = TRUE, verbose = TRUE )
 }
 \arguments{
   \item{S.arr}{the candidate starting dates for thermal accumulation (in day-of-year)}
@@ -20,7 +21,8 @@ ADTS( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
   \item{Time}{the vector of the occurrence times (in day-of-year) of a particular phenological event across many years}
   \item{Year2}{the vector of the years recording the climate data corresponding to the occurrence times}
   \item{DOY}{the vector of the dates (in day-of-year) for which climate data exist}
-  \item{Temp}{the mean daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
+  \item{Tmin}{the minimum daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
+  \item{Tmax}{the maximum daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
   \item{DOY.ul}{the upper limit of \code{DOY} used to predict the occurrence time}
   \item{fig.opt}{an optional argument to draw the figures associated with the determination 
 of the combination the starting date and activation free energy, 
@@ -79,11 +81,11 @@ Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com},
 Jing Tan \email{jmjwyb@163.com}, Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
 }
 \note{
-The entire mean daily temperature data set for the spring of each year should be provided. 
+The entire minimum and maximum daily temperature data set for the spring of each year should be provided. 
 \code{AADTS} is represented by the mean of \code{AADTS.arr} in the output.
 }
 \seealso{
-\code{\link{predADTS}}
+\code{\link{predADTS2}}
 }
 \examples{
 
@@ -96,18 +98,19 @@ Year1.val  <- X1$Year
 Time.val   <- X1$Time
 Year2.val  <- X2$Year
 DOY.val    <- X2$DOY
-Temp.val   <- X2$MDT
+Tmin.val   <- X2$MinDT
+Tmax.val   <- X2$MaxDT
 DOY.ul.val <- 120
-S.arr0     <- seq(40, 60, by = 1)
-Ea.arr0    <- seq(10, 20, by = 1)
+S.arr0     <- seq(45, 47, by = 1)
+Ea.arr0    <- seq(20, 24, by = 0.5)
 
 \donttest{
-  res3 <- ADTS( S.arr = S.arr0, Ea.arr = Ea.arr0, Year1 = Year1.val, Time = Time.val, 
-                Year2 = Year2.val, DOY = DOY.val, Temp = Temp.val, DOY.ul = DOY.ul.val, 
-                fig.opt = TRUE, verbose = TRUE)
-  res3
+  cand.res3 <- ADTS2( S.arr = S.arr0, Ea.arr = Ea.arr0, Year1 = Year1.val, Time = Time.val, 
+                      Year2 = Year2.val, DOY = DOY.val, Tmin = Tmin.val, Tmax = Tmax.val,  
+                      DOY.ul = DOY.ul.val, fig.opt = TRUE, verbose = TRUE)
+  cand.res3
 
-  RMSE.mat0  <- res3$RMSE.mat
+  RMSE.mat0  <- cand.res3$RMSE.mat
   RMSE.range <- range(RMSE.mat0)
 
   dev.new()
@@ -117,17 +120,12 @@ Ea.arr0    <- seq(10, 20, by = 1)
   image( S.arr0, Ea.arr0, RMSE.mat0, col = terrain.colors(200), axes = TRUE, 
          cex.axis = 1.5, cex.lab = 1.5, xlab = "Starting date (day-of-year)", 
          ylab = expression(paste(italic(E["a"]), " (kcal" \%.\% "mol"^{"-1"}, ")", sep = "")))
-  points( res3$S, res3$Ea, cex = 1.5, pch = 16, col = 2 )
+  points( cand.res3$S, cand.res3$Ea, cex = 1.5, pch = 16, col = 2 )
   contour( S.arr0, Ea.arr0, RMSE.mat0, levels = round(seq(RMSE.range[1], 
            RMSE.range[2], len = 20), 4), add = TRUE, cex = 1.5, col = "#696969", labcex = 1.5)
   par(par1)
   par(par2)
   par(par3)
-
-  resu3 <- ADTS( S.arr = 47, Ea.arr = seq(10, 20, by = 0.5), Year1 = Year1.val, Time = Time.val, 
-                 Year2 = Year2.val, DOY = DOY.val, Temp = Temp.val, DOY.ul = DOY.ul.val, 
-                 fig.opt = TRUE, verbose = TRUE)
-  resu3
 
   # graphics.off()
 

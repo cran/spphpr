@@ -32,8 +32,8 @@ temperature-dependent developmental rates of insects: (III) Phenological applica
 \emph{Annals of the Entomological Society of America} 110, 558\eqn{-}564. \doi{10.1093/aesa/sax063}
 }
 \author{
-Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com}, 
-Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
+Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com},
+Jing Tan \email{jmjwyb@163.com}, Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
 }
 \note{
 The returned vector, \code{DOY}, usually matches with the year vector and the mean daily 

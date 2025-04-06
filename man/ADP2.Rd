@@ -1,16 +1,16 @@
-\name{ADP}
-\alias{ADP}
+\name{ADP2}
+\alias{ADP2}
 \title{
-Function for Implementing the Accumulated Developmental Progress Method Using Mean Daily Temperatures
+Function for Implementing the Accumulated Developmental Progress Method Using Minimum and Maximum Daily Temperatures
 }
 \description{
 Estimates the starting date (\eqn{S}, in day-of-year) and the parameters of 
 a developmental rate model in the accumulated developmental progress (ADP) 
-method using mean daily air temperatures (Wagner et al., 1984; Shi et al., 2017a, b).
+method using minimum and maximum daily air temperatures (Wagner et al., 1984; Shi et al., 2017a, b).
 }
 \usage{
-ADP( S.arr, expr, ini.val, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
-     fig.opt = TRUE, control = list(), verbose = TRUE )
+ADP2( S.arr, expr, ini.val, Year1, Time, Year2, DOY, Tmin, Tmax, 
+      DOY.ul = 120, fig.opt = TRUE, control = list(), verbose = TRUE )
 }
 \arguments{
   \item{S.arr}{the candidate starting dates for thermal accumulation (in day-of-year)}
@@ -20,7 +20,8 @@ ADP( S.arr, expr, ini.val, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
   \item{Time}{the vector of the occurrence times (in day-of-year) of a particular phenological event across many years}
   \item{Year2}{the vector of the years recording the climate data corresponding to the occurrence times}
   \item{DOY}{the vector of the dates (in day-of-year) for which climate data exist}
-  \item{Temp}{the mean daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
+  \item{Tmin}{the minimum daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
+  \item{Tmax}{the maximum daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
   \item{DOY.ul}{the upper limit of \code{DOY} used to predict the occurrence time}
   \item{fig.opt}{an optional argument to draw the figures associated with the temperature-dependent developmental rate curve, 
 the mean daily temperatures versus years, and a comparison between the predicted and observed occurrence times}
@@ -31,7 +32,7 @@ the mean daily temperatures versus years, and a comparison between the predicted
 
 It is better not to set too many candidate starting dates, as doing so will be time-consuming. If \code{expr} 
 is selected as Arrhenius' equation, \code{S.arr} can be selected as the \code{S} obtained from the output of 
-the \code{\link{ADTS}} function. Here, \code{expr} can be other nonlinear temperature-dependent 
+the \code{\link{ADTS2}} function. Here, \code{expr} can be other nonlinear temperature-dependent 
 developmental rate functions (see Shi et al. [2017b] for details). Further, \code{expr} can be any an arbitrary 
 user-defined temperature-dependent developmental rate function, e.g., a function named \code{myfun}, 
 but it needs to take the form of \code{myfun <- function(P, x){...}}, 
@@ -51,19 +52,29 @@ In the accumulated developmental progress (ADP) method, when the annual accumula
 progress (AADP) reaches 100\%, the phenological event is predicted to occurr for each year. 
 Let \eqn{\mathrm{AADP}_{i}} denote the AADP of the \eqn{i}th year, which equals
 
-\deqn{\mathrm{AADP}_{i} = \sum_{j=S}^{E_{i}}r_{ij}\left(\mathrm{\mathbf{P}}; T_{ij}\right),}
+\deqn{\mathrm{AADP}_{i} = \sum_{j=S}^{E_{i}}\sum_{w=1}^{24}\frac{r_{ijw}\left(\mathrm{\mathbf{P}}; T_{ijw}\right)}{24},}
 
 where \eqn{S} represents the starting date (in day-of-year), \eqn{E_{i}} represents the ending date 
 (in day-of-year), i.e., the occurrence time of a pariticular phenological event in the \eqn{i}th year, 
 \eqn{\mathrm{\mathbf{P}}} is the vector of the model parameters in \code{expr}, 
-and \eqn{T_{ij}} represents the mean daily temperature of the \eqn{j}th day of the \eqn{i}th 
-year (in \eqn{{}^{\circ}}C or K). In theory, \eqn{\mathrm{AADP}_{i} = 100\%}, 
+\eqn{T_{ijw}} represents the estimated mean hourly temperature of the \eqn{w}th hour of the \eqn{j}th day of the \eqn{i}th 
+year (in \eqn{{}^{\circ}}C or K), and \eqn{r_{ijw}} represents the developmental rate (per hour) at \eqn{T_{ijw}}, 
+which is transferred to \eqn{r_{ij}} (per day) by dividing 24. This packages takes the method proposed 
+by Zohner et al. (2020) to estimate the mean hourly temperature for each of 24 hours:
+
+\deqn{T_{w} = \frac{T_{\mathrm{max}} - T_{\mathrm{min}}}{2}\, \mathrm{sin}\left(\frac{w\pi}{12}-
+\frac{\pi}{2}\right)+\frac{T_{\mathrm{max}} + T_{\mathrm{min}}}{2},}
+
+where \eqn{w} represents the \eqn{w}th hour of a day, and \eqn{T_{\mathrm{min}}} and \eqn{T_{\mathrm{max}}} 
+represent the minimum and maximum temperatures of the day, respectively. 
+ 
+\eqn{\qquad}In theory, \eqn{\mathrm{AADP}_{i} = 100\%}, 
 i.e., the AADP values of different years are a constant 100\%. However, in practice, there is 
 a certain deviation of \eqn{\mathrm{AADP}_{i}} from 100\%. The following approach 
 is used to determine the predicted occurrence time. 
-When \eqn{\sum_{j=S}^{F}r_{ij} = 100\%} (where \eqn{F \geq S}), it follows that \eqn{F} is 
-the predicted occurrence time; when \eqn{\sum_{j=S}^{F}r_{ij} < 100\%} and 
-\eqn{\sum_{j=S}^{F+1}r_{ij} > 100\%}, the trapezoid method (Ring and Harris, 1983) 
+When \eqn{\sum_{j=S}^{F}\sum_{w=1}^{24}r_{ijw}/24 = 100\%} (where \eqn{F \geq S}), it follows that \eqn{F} is 
+the predicted occurrence time; when \eqn{\sum_{j=S}^{F}\sum_{w=1}^{24}r_{ijw}/24 < 100\%} and 
+\eqn{\sum_{j=S}^{F+1}\sum_{w=1}^{24}r_{ijw}/24 > 100\%}, the trapezoid method (Ring and Harris, 1983) 
 is used to determine the predicted occurrence time. Let \eqn{\hat{E}_{i}} represent the predicted 
 occurrence time of the \eqn{i}th year. Assume that there are \eqn{n}-year phenological records. 
 When the starting date \eqn{S} and the temperature-dependent developmental rate model are known, 
@@ -86,7 +97,7 @@ as the target parameter vector.
 }
 \value{
   \item{TDDR}{the temperature-dependent developmental rate matrix consisting of the year, 
-day-of-year, mean daily temperature and developmental rate columns}
+day-of-year, estimated mean daily temperature (= (\code{Tmin} + \code{Tmax})/2) and developmental rate columns}
   \item{MAT}{a matrix consisting of the candidate starting dates and the estimates of 
 candidate model parameters with the corresponding RMSEs}
   \item{Dev.accum}{the calculated annual accumulated developmental progresses in different years} 
@@ -117,21 +128,26 @@ temperature-dependent developmental rates of insects: (III) Phenological applica
 Wagner, T.L., Wu, H.-I., Sharpe, P.J.H., Shcoolfield, R.M., Coulson, R.N. (1984) Modelling insect 
 development rates: a literature review and application of a biophysical model. 
 \emph{Annals of the Entomological Society of America} 77, 208\eqn{-}225. \doi{10.1093/aesa/77.2.208}
+
+Zohner, C.M., Mo, L., Sebald, V., Renner, S.S. (2020) Leaf-out in northern ecotypes of wide-ranging 
+trees requires less spring warming, enhancing the risk of spring frost damage at cold limits. 
+\emph{Global Ecology and Biogeography} 29, 1056\eqn{-}1072. \doi{10.1111/geb.13088}
 }
 \author{
 Peijian Shi \email{pjshi@njfu.edu.cn}, Zhenghong Chen \email{chenzh64@126.com},
 Jing Tan \email{jmjwyb@163.com}, Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca}.
 }
 \note{
-The entire mean daily temperature data set for the spring of each year should be provided. 
+The entire minimum and maximum daily temperature data set for the spring of each year should be provided. 
 In \code{TDDR}, the first column of \code{Year} saves the years, the second column 
 of \code{DOY} saves the day-of-year values, the third column of \code{Temperature} 
-saves the mean daily air temperatures calculated between the starting date to the occurrence times, 
+saves the estimated mean daily air temperatures (= (\code{Tmin} + \code{Tmax})/2) 
+from the starting date to the occurrence times, 
 and the fourth column of \code{Rate} saves the calculated developmental rates 
-corresponding to the mean daily temperatures. 
+corresponding to the estimated mean daily temperatures. 
 }
 \seealso{
-\code{\link{predADP}}
+\code{\link{predADP2}}
 }
 \examples{
 
@@ -144,9 +160,10 @@ Year1.val  <- X1$Year
 Time.val   <- X1$Time
 Year2.val  <- X2$Year
 DOY.val    <- X2$DOY
-Temp.val   <- X2$MDT
+Tmin.val   <- X2$MinDT
+Tmax.val   <- X2$MaxDT
 DOY.ul.val <- 120
-S.arr0     <- 47
+S.arr0     <- 46
 
 #### Defines a re-parameterized Arrhenius' equation ########################### 
 Arrhenius.eqn <- function(P, x){
@@ -162,45 +179,7 @@ Arrhenius.eqn <- function(P, x){
 ini.val0 <- list( B = 20, Ea = 14 )
 ##############################################################################
 
-\donttest{
-  res5 <- ADP( S.arr = S.arr0, expr = Arrhenius.eqn, ini.val = ini.val0, Year1 = Year1.val, 
-               Time = Time.val, Year2 = Year2.val, DOY = DOY.val, Temp = Temp.val, 
-               DOY.ul = DOY.ul.val, fig.opt = TRUE, control = list(trace = FALSE, 
-               reltol = 1e-12, maxit = 5000), verbose = TRUE )
-  res5
-
-  TDDR <- res5$TDDR
-  T    <- TDDR$Temperature
-  r    <- TDDR$Rate
-  Y    <- res5$Year
-  DP   <- res5$Dev.accum
-
-  dev.new()
-  par1 <- par(family="serif")
-  par2 <- par(mar=c(5, 5, 2, 2))
-  par3 <- par(mgp=c(3, 1, 0))
-  Ind <- sort(T, index.return=TRUE)$ix 
-  T1  <- T[Ind]
-  r1  <- r[Ind]
-  plot( T1, r1, cex.lab = 1.5, cex.axis = 1.5, pch = 1, cex = 1.5, col = 2, type = "l", 
-        xlab = expression(paste("Mean daily temperature (", degree, "C)", sep = "")), 
-        ylab = expression(paste("Calculated developmental rate (", {day}^{"-1"}, ")", sep = "")) ) 
-  par(par1)
-  par(par2)
-  par(par3)
-
-  dev.new()
-  par1 <- par(family="serif")
-  par2 <- par(mar=c(5, 5, 2, 2))
-  par3 <- par(mgp=c(3, 1, 0))
-  plot( Y, DP * 100, xlab = "Year", 
-        ylab = "Accumulated developmental progress (\%)", 
-        ylim = c(50, 150), cex.lab=1.5, cex.axis = 1.5, cex = 1.5 )
-  abline( h = 1 * 100, lwd = 1, col = 4, lty = 2 ) 
-  par(par1)
-  par(par2)
-  par(par3)
-
-  # graphics.off()
-}
+# The usage is similar to that of the "ADP" function. There is only a need to 
+#   replace "Temp = Temp.val" with "Tmin = Tmin.val, Tmax = Tmax.val" when using 
+#   the "ADP2" function.
 }

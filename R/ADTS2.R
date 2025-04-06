@@ -1,6 +1,6 @@
 
-ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120, 
-                  fig.opt = TRUE, verbose = TRUE ){
+ADTS2 <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Tmin, Tmax, 
+                  DOY.ul = 120, fig.opt = TRUE, verbose = TRUE ){
 
   S.arr  <- round(S.arr)
   DOY.ul <- round(DOY.ul)   
@@ -9,19 +9,19 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
     Year3        <- intersect(Year1, Year2)
     unused.years <- unique(Year1)[ !(unique(Year1) %in% Year3) ]  
     mat1         <- cbind(Year1, Time)
-    mat2         <- cbind(Year2, DOY, Temp)
+    mat2         <- cbind(Year2, DOY, Tmin, Tmax)
     new.mat1     <- mat1[Year1 %in% Year3, ]
     new.mat2     <- mat2[Year2 %in% Year3, ]
     Year1        <- new.mat1[,1]
     Time         <- new.mat1[,2]
     Year2        <- new.mat2[,1]
     DOY          <- new.mat2[,2]
-    Temp         <- new.mat2[,3]
+    Tmin         <- new.mat2[,3]
+    Tmax         <- new.mat2[,4]
   }   
   else{
     unused.years <- NULL
   }
-  T1 <- Temp
   if(min(S.arr)[1] <= 0){ 
     stop("The candidate of starting date should be greater than 0!")         
   }
@@ -44,15 +44,23 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
     # AADTS.fun is used to calcualte the annual accumulative DTS value
     # Arguments:
     # Ea: The activation free energy (in kcal/mol)
-    # T:  Daily mean air temperature (in degrees Celsius)
-    T    <- T + 273.15
-    Ts   <- 298.15 
-    # Ts: The reference temperature in K     
-    R    <- 1.987   
-    # R: The universal gas constant in cal/mol/deg
-    AADTS0 <- 0 
-    for(k in 1:length(T)){      
-        AADTS0 <- AADTS0 + exp((Ea*1000) * (T[k]-Ts)/(R*T[k]*Ts))
+    # T: Vector saving daily min and max air temperatures (in degrees Celsius)
+    if(length(T)==2)    T <- matrix(T, nrow=1, ncol=2)
+    T1     <- T[,1]
+    T2     <- T[,2]
+    AADTS0 <- 0
+    for(k in 1:nrow(T)){
+      Thour <- (T2[k]-T1[k])/2*sin(pi/12*1:24-pi/2)+(T2[k]+T1[k])/2
+      Thour <- Thour + 273.15
+      Ts <- 298.15 
+      # Ts: The reference temperature in K     
+      R  <- 1.987   
+      # R: The universal gas constant in cal/mol/deg
+      DTS <- 0
+      for(q in 1:24){
+        DTS <- DTS + exp((Ea*1000) * (Thour[q]-Ts)/(R*Thour[q]*Ts))
+      }
+      AADTS0 <- AADTS0 + DTS/24
     }
     AADTS0
   }  
@@ -60,7 +68,7 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
   counter0  <- 0
   counter1  <- 0
   mAADTS.mat <- matrix(NA, nrow=length(S.arr), ncol=length(Ea.arr)) 
-  RMSE.mat  <- mAADTS.mat
+  RMSE.mat   <- mAADTS.mat
   # RMSE.mat:  The RMSEs in days for the different combinations of S and Ea candidates
   # mAADTS.mat: The mean AADTS values for the different combinations of S and Ea candidates
   for(S in S.arr){
@@ -79,24 +87,29 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
       # AADTS.arr: To store the temporary AADTS values in different years
       AADTS.arr <- c()
       for(i in 1:length(Year1)){
-        temp.T1    <- T1[ Year2 == Year1[i] ]
-        temp.DOY   <- DOY[ Year2 == Year1[i] ]
-        MeanTemp1  <- temp.T1[which(temp.DOY == S): which(temp.DOY == Time[i])]
-        AADTS.arr[i] <- AADTS.fun(Ea, MeanTemp1)
+        temp.Tmin    <- Tmin[ Year2 == Year1[i] ]
+        temp.Tmax    <- Tmax[ Year2 == Year1[i] ]
+        temp.Tcomb   <- cbind(temp.Tmin, temp.Tmax)
+        temp.DOY     <- DOY[ Year2 == Year1[i] ]
+        ind2         <- which(temp.DOY == S): which(temp.DOY == Time[i])
+        AADTS.arr[i] <- AADTS.fun(Ea, temp.Tcomb[ind2, ])
       }
       mAADTS.mat[counter1, counter2] <- mean(AADTS.arr) 
       Time.pred <- c()  
       for(i in 1:length(Year1)){
-        temp.T1  <- T1[ Year2 == Year1[i] ]
-        temp.DOY <- DOY[ Year2 == Year1[i] ]          
-        for(k in which(temp.DOY == S): which(temp.DOY == DOY.ul)){      
-          temp.AADTS <- AADTS.fun(Ea, temp.T1[which(temp.DOY == S): k])          
+        temp.Tmin    <- Tmin[ Year2 == Year1[i] ]
+        temp.Tmax    <- Tmax[ Year2 == Year1[i] ]
+        temp.Tcomb   <- cbind(temp.Tmin, temp.Tmax)
+        temp.DOY     <- DOY[ Year2 == Year1[i] ]         
+        for(k in which(temp.DOY == S): which(temp.DOY == DOY.ul)){  
+          ind2       <- which(temp.DOY == S): k    
+          temp.AADTS <- AADTS.fun(Ea, temp.Tcomb[ind2, ])  
           if(temp.AADTS >= mean(AADTS.arr)){
             # y1: The upper base length of the trapezoid
             # y2: The length of the line segment parallel to the two bases of the trapezoid 
             # y3: The lower base length of the trapezoid
             # x3: The height of the trapezoid is temp.DOY[k] - temp.DOY[k-1]     
-            y1           <- AADTS.fun(Ea, temp.T1[which(temp.DOY == S): (k-1)])
+            y1           <- AADTS.fun(Ea, temp.Tcomb[which(temp.DOY == S): (k-1), ])
             y2           <- mean(AADTS.arr)
             y3           <- temp.AADTS   
             x3           <- temp.DOY[k] - temp.DOY[k-1] 
@@ -108,7 +121,7 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
             }            
             break
           }
-          extreme.temp <- temp.T1[which(temp.DOY == S): which(temp.DOY == DOY.ul)]
+          extreme.temp <- temp.Tcomb[which(temp.DOY == S): which(temp.DOY == DOY.ul), ]
           extreme.AADTS <- AADTS.fun( Ea, extreme.temp )
           if(extreme.AADTS < mean(AADTS.arr)){
             Time.pred[i] <- DOY.ul
@@ -146,19 +159,24 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
     #   that S and Ea are finally determined.
     AADTS.arr <- c()
     for(i in 1:length(Year1)){
-      temp.T1      <- T1[ Year2 == Year1[i] ]
+      temp.Tmin    <- Tmin[ Year2 == Year1[i] ]
+      temp.Tmax    <- Tmax[ Year2 == Year1[i] ]
+      temp.Tcomb   <- cbind(temp.Tmin, temp.Tmax)
       temp.DOY     <- DOY[ Year2 == Year1[i] ]
-      MeanTemp1    <- temp.T1[which(temp.DOY == goal.S): which(temp.DOY == Time[i])]
-      AADTS.arr[i] <- AADTS.fun(goal.Ea, MeanTemp1)
+      ind2         <- which(temp.DOY == goal.S): which(temp.DOY == Time[i])
+      AADTS.arr[i] <- AADTS.fun(goal.Ea, temp.Tcomb[ind2, ])
     }
     Time.pred <- c()
     for(i in 1:length(Year1)){
-      temp.T1    <- T1[ Year2 == Year1[i] ]
-      temp.DOY   <- DOY[ Year2 == Year1[i] ]     
+      temp.Tmin    <- Tmin[ Year2 == Year1[i] ]
+      temp.Tmax    <- Tmax[ Year2 == Year1[i] ]
+      temp.Tcomb   <- cbind(temp.Tmin, temp.Tmax)
+      temp.DOY     <- DOY[ Year2 == Year1[i] ]    
       for(k in which(temp.DOY == goal.S): which(temp.DOY == DOY.ul)){
-        temp.AADTS   <- AADTS.fun(goal.Ea, temp.T1[which(temp.DOY == goal.S): k])
-        if(temp.AADTS > mean(AADTS.arr)){
-          y1           <- AADTS.fun(goal.Ea, temp.T1[which(temp.DOY == goal.S): (k-1)])
+        ind2       <- which(temp.DOY == goal.S): k    
+        temp.AADTS <- AADTS.fun(goal.Ea, temp.Tcomb[ind2, ])    
+        if(temp.AADTS >= mean(AADTS.arr)){
+          y1           <- AADTS.fun(goal.Ea, temp.Tcomb[which(temp.DOY == goal.S): (k-1), ] )
           y2           <- mean(AADTS.arr)
           y3           <- temp.AADTS   
           x3           <- temp.DOY[k] - temp.DOY[k-1]      
@@ -170,7 +188,7 @@ ADTS <- function( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120,
           }  
           break
         }
-        extreme.temp <- temp.T1[which(temp.DOY == goal.S): which(temp.DOY == DOY.ul)]
+        extreme.temp <- temp.Tcomb[which(temp.DOY == goal.S): which(temp.DOY == DOY.ul), ]
         extreme.AADTS <- AADTS.fun( goal.Ea, extreme.temp )
         if(extreme.AADTS < mean(AADTS.arr)){
           Time.pred[i] <- DOY.ul
