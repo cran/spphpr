@@ -70,7 +70,7 @@ Jing Tan \email{jmjwyb@163.com}, Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca
 The entire mean daily temperature data set for the spring of each year should be provided.
 }
 \seealso{
-\code{\link{ADD}}
+\code{\link{ADD}}, \code{\link{ADD3}}
 }
 \examples{
 

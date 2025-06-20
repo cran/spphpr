@@ -53,7 +53,7 @@ associated with the smallest value in \code{RMSE.mat}}
 between \code{Year1} and \code{Year2}}
   \item{Time.pred}{the predicted occurrence times in different years}
   \item{S}{the determined starting date (day-of-year)}
-  \item{Ea}{the determined activation free energy values (in kcal\eqn{\cdot}mol\eqn{{}^{-1}})} 
+  \item{Ea}{the determined activation free energy value (in kcal\eqn{\cdot}mol\eqn{{}^{-1}})} 
   \item{AADD}{the expected AADTS}
   \item{RMSE}{the smallest RMSE (in days) in \code{RMSE.mat} from 
 different combinations of \eqn{S} and \eqn{E_{a}}}

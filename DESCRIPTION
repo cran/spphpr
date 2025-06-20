@@ -1,8 +1,8 @@
 Package: spphpr
 Type: Package
 Title: Spring Phenological Prediction
-Version: 1.1.4
-Date: 2025-04-06
+Version: 1.1.5
+Date: 2025-06-20
 Authors@R: c(person(given="Peijian", family="Shi", email="pjshi@njfu.edu.cn", role=c("aut", "cre")),
         person(given=c("Zhenghong"), family="Chen", email="chenzh64@126.com", role=c("aut")),
         person(given=c("Jing"), family="Tan", email="jmjwyb@163.com", role=c("aut")), 
@@ -16,6 +16,6 @@ Description: Predicts the occurrence times (in day-of-year) of spring phenologic
 Depends: R (>= 4.2.0)
 License: GPL (>= 2)
 NeedsCompilation: no
-Packaged: 2025-04-06 07:06:48 UTC; PEIJIAN SHI
+Packaged: 2025-06-20 12:55:50 UTC; PEIJIAN SHI
 Repository: CRAN
-Date/Publication: 2025-04-06 07:30:02 UTC
+Date/Publication: 2025-06-20 13:30:02 UTC

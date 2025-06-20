@@ -1,36 +1,37 @@
-\name{ADTS}
-\alias{ADTS}
+\name{ADD4}
+\alias{ADD4}
 \title{
-Function for Implementing the Accumulated Days Transferred to a Standardized Temperature Method Using Mean Daily Temperatures
+Function for Implementing the Accumulated Degree Days Method Using Minimum and 
+Maximum Daily Temperatures for the Combinations of the Starting Date and Base Temperature
 }
 \description{
-Estimates the starting date (\eqn{S}, in day-of-year) and activation free energy (\eqn{E_{a}}, in kcal 
-\eqn{\cdot} mol\eqn{{}^{-1}}) in the accumulated days transferred to a standardized 
-temperature (ADTS) method using mean daily air temperatures 
-(Konno and Sugihara, 1986; Aono, 1993; Shi et al., 2017a, b).
+Estimates the starting date (\eqn{S}, in day-of-year) and base temperature (\eqn{T_{0}}, 
+in \eqn{{}^{\circ}}C) in the accumulated degree days (ADD) method using minimum and 
+maximum daily air temperatures (Konno and Sugihara, 1986; Aono, 1993; Shi et al., 2017a, b).
 }
 \usage{
-ADTS( S.arr, Ea.arr, Year1, Time, Year2, DOY, Temp, DOY.ul = 120, 
+ADD4( S.arr, T0.arr, Year1, Time, Year2, DOY, Tmin, Tmax, DOY.ul = 120, 
       fig.opt = TRUE, verbose = TRUE )
 }
 \arguments{
   \item{S.arr}{the candidate starting dates for thermal accumulation (in day-of-year)}
-  \item{Ea.arr}{the candidate activation free energy values (in kcal \eqn{\cdot} mol\eqn{{}^{-1}})}
+  \item{T0.arr}{the candidate base temperatures (in \eqn{{}^{\circ}}C)}
   \item{Year1}{the vector of the years in which a particular phenological event was recorded}
   \item{Time}{the vector of the occurrence times (in day-of-year) of a particular phenological event across many years}
   \item{Year2}{the vector of the years recording the climate data corresponding to the occurrence times}
   \item{DOY}{the vector of the dates (in day-of-year) for which climate data exist}
-  \item{Temp}{the mean daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
+  \item{Tmin}{the minimum daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
+  \item{Tmax}{the maximum daily air temperature data (in \eqn{{}^{\circ}}C) corresponding to \code{DOY}}
   \item{DOY.ul}{the upper limit of \code{DOY} used to predict the occurrence time}
   \item{fig.opt}{an optional argument to draw the figures associated with the determination 
-of the combination the starting date and activation free energy, 
+of the combination the starting date and base temperature, 
 and a comparison between the predicted and observed occurrence times}
   \item{verbose}{an optional argument allowing users to suppress the printing of computation progress}
 }
 \details{
 
 When \code{fig.opt} is equal to \code{TRUE}, it will show the contours of the root-mean-square 
-errors (RMSEs) based on different combinations of \eqn{S} and \eqn{E_{a}}.
+errors (RMSEs) based on different combinations of \eqn{S} and \eqn{T_{0}}.
 
 \eqn{\qquad}The function does not require that \code{Year1} is the same as \code{unique(Year2)}, 
 and the intersection of the two vectors of years will be kept. The unused years that have phenological 
@@ -40,21 +41,21 @@ records but lack climate data will be showed in \code{unused.years} in the retur
 
 }
 \value{
-  \item{mAADTS.mat}{a matrix consisting of the means of the annual accumulated days transferred 
-to a standardized temperature (AADTS) values from the combinations of \eqn{S} and \eqn{E_{a}}}
+  \item{mAADD.mat}{a matrix consisting of the means of the annual accumulated degree days (AADD) 
+values from the combinations of \eqn{S} and \eqn{T_{0}}}
   \item{RMSE.mat}{the matrix consisting of the RMSEs (in days) from different 
-combinations of \eqn{S} and \eqn{E_{a}}}
-  \item{AADTS.arr}{the AADTS values in different years 
+combinations of \eqn{S} and \eqn{T_{0}}}
+  \item{AADD.arr}{the AADD values in different years 
 associated with the smallest value in \code{RMSE.mat}} 
   \item{Year}{The overlapping years between \code{Year1} and \code{Year2}}
   \item{Time}{The observed occurrence times (day-of-year) in the overlapping years 
 between \code{Year1} and \code{Year2}}
   \item{Time.pred}{the predicted occurrence times in different years}
   \item{S}{the determined starting date (day-of-year)}
-  \item{Ea}{the determined activation free energy value (in kcal\eqn{\cdot}mol\eqn{{}^{-1}})} 
-  \item{AADD}{the expected AADTS}
+  \item{T0}{the determined base temperature (in \eqn{{}^{\circ}}C)} 
+  \item{AADD}{the expected AADD}
   \item{RMSE}{the smallest RMSE (in days) in \code{RMSE.mat} from 
-different combinations of \eqn{S} and \eqn{E_{a}}}
+different combinations of \eqn{S} and \eqn{T_{0}}}
   \item{unused.years}{the years that have phenological records but lack climate data}
 }
 \references{
@@ -80,10 +81,10 @@ Jing Tan \email{jmjwyb@163.com}, Brady K. Quinn \email{Brady.Quinn@dfo-mpo.gc.ca
 }
 \note{
 The entire mean daily temperature data set for the spring of each year should be provided. 
-\code{AADTS} is represented by the mean of \code{AADTS.arr} in the output.
+\code{AADD} is represented by the mean of \code{AADD.arr} in the output.
 }
 \seealso{
-\code{\link{predADTS}}
+\code{\link{predADD2}}
 }
 \examples{
 
@@ -96,38 +97,23 @@ Year1.val  <- X1$Year
 Time.val   <- X1$Time
 Year2.val  <- X2$Year
 DOY.val    <- X2$DOY
-Temp.val   <- X2$MDT
+Tmin.val   <- X2$MinDT
+Tmax.val   <- X2$MaxDT
 DOY.ul.val <- 120
-S.arr0     <- seq(40, 60, by = 1)
-Ea.arr0    <- seq(10, 20, by = 1)
+S.arr0     <- seq(63, 66, by = 1)
+T0.arr0    <- 3.8
 
 \donttest{
-  res3 <- ADTS( S.arr = S.arr0, Ea.arr = Ea.arr0, Year1 = Year1.val, Time = Time.val, 
-                Year2 = Year2.val, DOY = DOY.val, Temp = Temp.val, DOY.ul = DOY.ul.val, 
-                fig.opt = TRUE, verbose = TRUE)
-  res3
+  RES2 <- ADD4( S.arr = S.arr0, T0.arr = T0.arr0, Year1 = Year1.val, Time = Time.val, 
+                Year2 = Year2.val, DOY = DOY.val, Tmin = Tmin.val, Tmax = Tmax.val, 
+                DOY.ul = DOY.ul.val, fig.opt = TRUE, verbose = TRUE)
+  RES2
 
-  RMSE.mat0  <- res3$RMSE.mat
-  RMSE.range <- range(RMSE.mat0)
 
-  dev.new()
-  par1 <- par(family="serif")
-  par2 <- par(mar=c(5, 5, 2, 2))
-  par3 <- par(mgp=c(3, 1, 0))
-  image( S.arr0, Ea.arr0, RMSE.mat0, col = terrain.colors(200), axes = TRUE, 
-         cex.axis = 1.5, cex.lab = 1.5, xlab = "Starting date (day-of-year)", 
-         ylab = expression(paste(italic(E["a"]), " (kcal" \%.\% "mol"^{"-1"}, ")", sep = "")))
-  points( res3$S, res3$Ea, cex = 1.5, pch = 16, col = 2 )
-  contour( S.arr0, Ea.arr0, RMSE.mat0, levels = round(seq(RMSE.range[1], 
-           RMSE.range[2], len = 20), 4), add = TRUE, cex = 1.5, col = "#696969", labcex = 1.5)
-  par(par1)
-  par(par2)
-  par(par3)
-
-  resu3 <- ADTS( S.arr = 47, Ea.arr = seq(10, 20, by = 0.5), Year1 = Year1.val, Time = Time.val, 
-                 Year2 = Year2.val, DOY = DOY.val, Temp = Temp.val, DOY.ul = DOY.ul.val, 
-                 fig.opt = TRUE, verbose = TRUE)
-  resu3
+  RESU2 <- ADD4( S.arr = 65, T0.arr = seq(2, 6, by = 1), Year1 = Year1.val, Time = Time.val, 
+                 Year2 = Year2.val, DOY = DOY.val, Tmin = Tmin.val, Tmax = Tmax.val, 
+                 DOY.ul = DOY.ul.val, fig.opt = TRUE, verbose = TRUE)
+  RESU2
 
   # graphics.off()
 

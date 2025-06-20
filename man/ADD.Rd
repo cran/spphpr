@@ -136,7 +136,7 @@ S.pd0      <- NULL
   par(par2)
   par(par3)
 
-  resu1 <- ADD( S.pd = 47, T0.arr = seq(-10, 0, by = 0.1), Year1 = Year1.val, Time = Time.val, 
+  resu1 <- ADD( S.pd = 65, T0.arr = seq(-10, 0, by = 0.1), Year1 = Year1.val, Time = Time.val, 
                 Year2 = Year2.val, DOY = DOY.val, Temp = Temp.val, 
                 DOY.ul = DOY.ul.val, fig.opt = TRUE, S.def = 54, verbose = TRUE )
   resu1
